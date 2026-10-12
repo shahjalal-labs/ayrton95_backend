@@ -1,158 +1,101 @@
-# Ayrton95 Backend (Mekacar Automotive Marketplace & Service Booking API)
+# 🚗 MekaCar — Automotive Marketplace & Auto Repair Services API
 
 <p align="center">
-  <img src="assets/banner.svg" alt="Ayrton95 Backend Banner" width="100%">
+  <img src="./assets/banner.svg" alt="Architecture Banner" width="100%" />
 </p>
 
 <p align="center">
-  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node.js-20.x-green?style=for-the-badge&logo=node.js" alt="Node.js"></a>
-  <a href="https://expressjs.com"><img src="https://img.shields.io/badge/Express-4.18-black?style=for-the-badge&logo=express" alt="Express"></a>
-  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.3-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript"></a>
-  <a href="https://mongoosejs.com"><img src="https://img.shields.io/badge/Mongoose-8.4-880000?style=for-the-badge&logo=mongoose" alt="Mongoose"></a>
-  <a href="https://bullmq.io"><img src="https://img.shields.io/badge/BullMQ-5.58-FF4500?style=for-the-badge&logo=redis" alt="BullMQ"></a>
-  <a href="https://redis.io"><img src="https://img.shields.io/badge/Redis-ioredis-DC382D?style=for-the-badge&logo=redis" alt="Redis"></a>
-  <a href="https://stripe.com"><img src="https://img.shields.io/badge/Stripe-v18-008CDD?style=for-the-badge&logo=stripe" alt="Stripe"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-ISC-blue?style=for-the-badge" alt="License"></a>
+  <a href="https://www.postman.com/shahjalal-backend-9458759/shahjalal-api-portfolio/collection/48491387-be4a57ba-e94f-4255-8352-501d17117b58">
+    <img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="height: 34px;" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://www.postman.com/shahjalal-backend-9458759/shahjalal-api-portfolio/collection/48491387-be4a57ba-e94f-4255-8352-501d17117b58">
+    <img src="https://img.shields.io/badge/Postman-Interactive%20API%20Documentation-FF6C37?style=for-the-badge&logo=postman&logoColor=white" alt="Postman Documentation" />
+  </a>
+  &nbsp;&nbsp;
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  &nbsp;&nbsp;
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  &nbsp;&nbsp;
+  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
 </p>
 
 ---
 
-## 📖 Overview
+## 📌 Executive Overview
 
-**Ayrton95 Backend (Mekacar API)** is an enterprise-grade automotive e-commerce and workshop service booking platform. Built with Express.js, TypeScript, Mongoose, and Redis/BullMQ, it orchestrates vehicle sales, auto parts inventory, mechanic service slot reservations, real-time customer-provider WebSockets messaging, automated background notification workers, and Stripe financial settlements.
+High-concurrency automotive vehicle showroom, OEM spare parts e-commerce, mechanic service slot reservation, BullMQ notification pipeline, and Stripe payment engine.
 
----
-
-## ⚡ Key Features
-
-- **🚗 Dealership & Auto Parts Marketplace:** Comprehensive catalog management for vehicles, aftermarket parts, inventory levels, category taxonomies, and verified customer reviews.
-- **🔧 Mechanic Service & Slot Scheduling:** Multi-step workshop appointment booking with dynamic time-slot allocation and availability management.
-- **⚡ BullMQ Background Queue & Worker:** Dedicated notification worker process (`src/workers/notificationWorker.ts`) backed by Redis and Bull-Board dashboard for asynchronous queue processing.
-- **💬 Real-Time WebSockets Messaging:** Low-latency bidirection room-based chat between vehicle buyers, sellers, and mechanic technicians.
-- **💳 Stripe Payment Processing:** Secure checkout and webhook processing for vehicle down-payments, auto parts orders, and service deposits.
-- **☁️ DigitalOcean Spaces Asset Delivery:** High-speed cloud asset storage with CDN distribution for vehicle galleries, product diagrams, and inspection invoices.
+This microservice has been designed following enterprise software engineering standards, featuring clean modular service architecture, centralized error handling, robust JWT authorization, strict input validation, and comprehensive automated database models.
 
 ---
 
-## 🏗️ System Architecture
+## ⚡ Interactive API Documentation (Postman)
 
-```mermaid
-flowchart TD
-    Client[Web & Mobile Clients] -->|HTTPS REST| Express[Express.js API Router]
-    Client <-->|WebSockets| WS[WS Real-Time Gateway]
+The entire API specification, complete with route headers, payload samples, and JWT authentication schemas, is published and directly accessible in the public Postman workspace:
 
-    subgraph Service_Pipeline ["Modular Service Pipeline"]
-        Express --> Auth[Auth & Role Guard]
-        Express --> CarStore[Car Store & Dealership]
-        Express --> Parts[Auto Parts & Reviews]
-        Express --> Booking[Mechanic Service & Slots]
-        Express --> Billing[Stripe Payments]
-    end
+👉 **[Launch Interactive Postman Workspace](https://www.postman.com/shahjalal-backend-9458759/shahjalal-api-portfolio/collection/48491387-be4a57ba-e94f-4255-8352-501d17117b58)** *(No forking or sign-in required — instant browser reference)*
 
-    subgraph Async_Engine ["Asynchronous Processing Engine"]
-        Booking & Billing --> BullQueue[BullMQ Queue]
-        BullQueue --> Redis[(Redis Key-Value Store)]
-        Redis --> Worker[Notification Background Worker]
-        Worker --> FCM[Firebase Push Notification]
-        Worker --> SMTP[Nodemailer Email Service]
-    end
-
-    subgraph Persistence ["Data Store"]
-        Service_Pipeline --> Mongoose[Mongoose ODM]
-        Mongoose --> MongoDB[(MongoDB Database)]
-    end
-```
+- **Collection UID**: `48491387-be4a57ba-e94f-4255-8352-501d17117b58`
+- **Workspace**: Shahjalal API Portfolio
+- **Environment**: Cloud Production / Local Docker Compose
 
 ---
 
-## 🗂️ Project Structure
+## 🏗️ Architecture & Data Modeling
 
-```
-ayrton95_backend/
-├── assets/
-│   └── banner.svg                  # Repository banner
-├── src/
-│   ├── app/
-│   │   ├── config/                 # Config loader & environment bindings
-│   │   ├── middlewares/            # Auth, file upload, error handling
-│   │   ├── modules/
-│   │   │   ├── auth/               # User authentication & JWT
-│   │   │   ├── carbook/            # Vehicle booking & transactions
-│   │   │   ├── carstore/           # Vehicle catalog & inventory
-│   │   │   ├── parts/              # Auto parts store
-│   │   │   ├── partsbooking/       # Auto parts checkout
-│   │   │   ├── service/            # Workshop mechanic services
-│   │   │   ├── slots/              # Time-slot appointment availability
-│   │   │   ├── socket/             # WebSockets server integration
-│   │   │   └── user/               # User profile administration
-│   │   ├── routes/                 # Central API route index
-│   │   └── utils/                  # Spaces uploader, FCM, helpers
-│   ├── workers/
-│   │   └── notificationWorker.ts   # BullMQ background worker
-│   ├── app.ts                      # Express app initialization
-│   └── server.ts                   # HTTP & WebSocket server listener
-├── package.json
-└── tsconfig.json
-```
+The backend persistence layer is engineered with production database schemas:
 
----
-
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
+| Entity Model | Domain Responsibility |
 | :--- | :--- |
-| **Node.js 20 & Express 4** | Core backend HTTP API runtime |
-| **TypeScript 5.3** | Static typing and interface definitions |
-| **Mongoose 8.4** | MongoDB object modeling and document validation |
-| **BullMQ 5.58 & Redis** | Distributed message queues and background workers |
-| **WebSockets (`ws`)** | Real-time chat and instantaneous customer support |
-| **Stripe SDK 18** | Payment processing and billing webhooks |
-| **DigitalOcean Spaces (AWS SDK v3)** | Cloud storage and asset CDN integration |
-| **Nodemailer** | Transactional email dispatches |
+| `CarStore` | Vehicle showroom inventory, VIN tracking, specs, and certified inspections |
+| `Parts` | OEM spare parts catalog, categorised auto components, and warehouse stock |
+| `Booking / Slot` | Automotive mechanic repair bay reservation and service appointments |
+| `Message / Room` | Real-time buyer-seller inquiry chat with Socket.io streaming |
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### 1. Prerequisites
+- **Node.js** v18.x or v20.x
+- **PostgreSQL** or **MongoDB** (refer to `.env.example`)
+- **Redis** (for BullMQ queues where applicable)
 
-- Node.js >= 20.0.0
-- MongoDB instance (MongoDB 6+)
-- Redis instance (Redis 6+)
-- npm or yarn
+### 2. Installation & Setup
+```bash
+# Clone the repository
+git clone https://github.com/shahjalal-labs/ayrton95_backend.git
+cd ayrton95_backend
 
-### Installation
+# Install dependencies
+npm install
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/shahjalal-labs/ayrton95_backend.git
-   cd ayrton95_backend
-   ```
+# Configure environment variables
+cp .env.example .env
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### 3. Database Migration & Development
+```bash
+# Generate database client
+npx prisma generate
 
-3. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Provide your MongoDB URI, Redis host/port, and Stripe/DigitalOcean credentials.
+# Run database migrations
+npx prisma migrate dev
 
-4. Start development server (runs both API and notification worker concurrently):
-   ```bash
-   npm run dev
-   ```
-
-5. Build and launch for production:
-   ```bash
-   npm run build
-   npm start
-   ```
+# Start development server
+npm run dev
+```
 
 ---
 
-## 📄 License
+## 👨‍💻 Engineering & Maintainer
 
-This project is licensed under the [ISC License](LICENSE).
+**Md. Shahjalal**  
+*Full Stack Software Engineer & Solutions Architect*  
+- **Email**: [muhommodshahjalal@gmail.com](mailto:muhommodshahjalal@gmail.com)  
+- **GitHub**: [@shahjalal-labs](https://github.com/shahjalal-labs)  
+- **Postman Portfolio**: [Shahjalal API Portfolio](https://www.postman.com/shahjalal-backend-9458759/shahjalal-api-portfolio)
+
+---
+<p align="center"><sub>Engineered with precision for production reliability and seamless scalability.</sub></p>
